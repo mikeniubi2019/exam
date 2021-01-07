@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xueyi.exam.mapper.ReadingQuestionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xueyi.exam.beans.ReadingQuestion">
+        <id column="id" property="id" />
+        <result column="title_id" property="titleId" />
+        <result column="question_title" property="questionTitle" />
+        <result column="question_choice1" property="questionChoice1" />
+        <result column="question_choice2" property="questionChoice2" />
+        <result column="question_choice3" property="questionChoice3" />
+        <result column="question_choice4" property="questionChoice4" />
+        <result column="question_choice5" property="questionChoice5" />
+        <result column="question_choice6" property="questionChoice6" />
+        <result column="question_answer" property="questionAnswer" />
+        <result column="question_score" property="questionScore" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, title_id, question_title, question_choice1, question_choice2, question_choice3, question_choice4, question_choice5, question_choice6, question_answer, question_score
+    </sql>
+
+</mapper>

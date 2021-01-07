@@ -1,0 +1,413 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>在线考试界面</title>
+    <link href="../../static/css/examMain.css" rel="stylesheet" type="text/css" />
+ 
+    <link href="../../static/css/examTest.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="../../static/css/font.css">
+    <link rel="stylesheet" href="../../static/css/weadmin.css">
+    <style>
+        .hasBeenAnswer {
+            background: #5d9cec;
+            color: #fff;
+        }
+
+        .reading h2 {
+            width: 100%;
+            margin: 20px 0 70px;
+            text-align: center;
+            line-height: 2;
+            font-size: 20px;
+            color: #59595b;
+        }
+
+            .reading h2 a {
+                text-decoration: none;
+                color: #59595b;
+                font-size: 20px;
+            }
+
+                .reading h2 a:hover {
+                    color: #2183f1;
+                }
+    </style>
+</head>
+
+<body>
+    <div class="main">
+        <!--nr start-->
+        <div class="test_main">
+            <div class="nr_left">
+                <div class="test">
+                    <form class="layui-form" lay-filter="timeEnd">
+                        <div class="test_title">
+                            <p class="test_time">
+                                <i class="layui-icon">&#xe68d;</i><b th:text="${examTime}" class="alt-1"></b>
+                            </p>
+                            <font><input style="text-align:center;" id="jiaoJuan" type="buttom" value="交卷" lay-submit lay-filter="pageSubmit" ></font>
+                        </div>
+
+                        <div th:if="${singel!=null and singel.size()>0}" class="test_content">
+                            <div class="test_content_title">
+                                <h2>单选题</h2>
+                                <p>
+                                    <span>共</span><i th:text="${singelCount}" class="content_lit"></i><span>题，</span><span>合计</span><i th:text="${singelScore}" class="content_fs"></i><span>分</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div th:if="${singel!=null and singel.size()>0}" th:each="question,questionState : ${singel}" class="test_content_nr">
+                            <ul>
+                                <li th:id="|qu_${question.id}|">
+                                    <div class="test_content_nr_tt">
+                                        <i th:text="${questionState.count}"></i><span th:text="|(${question.questionScore}分)|"></span><font th:text="${question.questionTitle}"></font><b class="layui-icon">&#xe62a;</b>
+                                    </div>
+
+                                    <div class="test_content_nr_main">
+                                        <ul>
+
+                                            <li th:if="${question.questionChoice1!=null}" class="option">
+                                                <label><input lay-ignore value="1" type="radio" class="radioOrCheck" th:name="${question.id}"
+                                                               />
+                                                    A.
+                                                    <p th:text="${question.questionChoice1}" class="ue" style="display: inline;"></p>
+                                                </label>
+                                            </li>
+                                            <li th:if="${question.questionChoice2!=null}" class="option">
+                                                <label><input lay-ignore value="2" type="radio" class="radioOrCheck" th:name="${question.id}"
+                                                />
+                                                    B.
+                                                    <p th:text="${question.questionChoice2}" class="ue" style="display: inline;"></p>
+                                                </label>
+                                            </li>
+                                            <li th:if="${question.questionChoice3!=null}" class="option">
+                                                <label><input lay-ignore value="3" type="radio" class="radioOrCheck" th:name="${question.id}"
+                                                />
+                                                    C.
+                                                    <p th:text="${question.questionChoice3}" class="ue" style="display: inline;"></p>
+                                                </label>
+                                            </li>
+                                            <li th:if="${question.questionChoice4!=null}" class="option">
+                                                <label><input lay-ignore value="4" type="radio" class="radioOrCheck" th:name="${question.id}"
+                                                />
+                                                    D.
+                                                    <p th:text="${question.questionChoice4}" class="ue" style="display: inline;"></p>
+                                                </label>
+                                            </li>
+                                            <li th:if="${question.questionChoice5!=null and question.questionChoice5!=''}" class="option">
+                                                <label><input lay-ignore value="5" type="radio" class="radioOrCheck" th:name="${question.id}"
+                                                />
+                                                    E.
+                                                    <p th:text="${question.questionChoice5}" class="ue" style="display: inline;"></p>
+                                                </label>
+                                            </li>
+
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+
+                        <div th:if="${muilty!=null and muilty.size()>0}" class="test_content">
+                            <div class="test_content_title">
+                                <h2>多选题</h2>
+                                <p>
+                                    <span>共</span><i th:text="${muiltyCount}" class="content_lit"></i><span>题，</span><span>合计</span><i th:text="${muiltyScore}" class="content_fs"></i><span>分</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div th:if="${muilty!=null and muilty.size()>0}" th:each="question,questionState : ${muilty}" class="test_content_nr">
+                            <ul>
+                                <li th:id="|qu_${question.id}|">
+                                    <div class="test_content_nr_tt">
+                                        <i th:text="${questionState.count}"></i><span th:text="|(${question.questionScore}分)|"></span><font th:text="${question.questionTitle}"></font><b class="layui-icon">&#xe60a;</b>
+                                    </div>
+
+                                    <div class="test_content_nr_main">
+                                        <ul>
+
+                                            <li th:if="${question.questionChoice1!=null}" class="option">
+                                                <label><input lay-ignore value="1" type="checkbox" class="radioOrCheck" th:name="|${question.id}[1]|"
+                                                />
+                                                    A.
+                                                    <p th:text="${question.questionChoice1}" class="ue" style="display: inline;"></p>
+                                                </label>
+                                            </li>
+                                            <li th:if="${question.questionChoice2!=null}" class="option">
+                                                <label><input lay-ignore value="2" type="checkbox" class="radioOrCheck" th:name="|${question.id}[2]|"
+                                                />
+                                                    B.
+                                                    <p th:text="${question.questionChoice2}" class="ue" style="display: inline;"></p>
+                                                </label>
+                                            </li>
+                                            <li th:if="${question.questionChoice3!=null}" class="option">
+                                                <label><input lay-ignore value="3" type="checkbox" class="radioOrCheck" th:name="|${question.id}[3]|"
+                                                />
+                                                    C.
+                                                    <p th:text="${question.questionChoice3}" class="ue" style="display: inline;"></p>
+                                                </label>
+                                            </li>
+                                            <li th:if="${question.questionChoice4!=null}" class="option">
+                                                <label><input lay-ignore value="4" type="checkbox" class="radioOrCheck" th:name="|${question.id}[4]|"
+                                                />
+                                                    D.
+                                                    <p th:text="${question.questionChoice4}" class="ue" style="display: inline;"></p>
+                                                </label>
+                                            </li>
+                                            <li th:if="${question.questionChoice5!=null and question.questionChoice5!=''}" class="option">
+                                                <label><input lay-ignore value="5" type="checkbox" class="radioOrCheck" th:name="|${question.id}[5]|"
+                                                />
+                                                    E.
+                                                    <p th:text="${question.questionChoice5}" class="ue" style="display: inline;"></p>
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+
+                        <div th:if="${readingList!=null and readingList.size()>0}" class="test_content">
+                            <div class="test_content_title">
+                                <h2>阅读理解</h2>
+                                <p>
+                                    <span>共</span><i th:text="${readingCount}" class="content_lit"></i><span>题，</span><span>合计</span><i th:text="${readingScore}" class="content_fs"></i><span>分</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div th:if="${readingList!=null and readingList.size()>0}" th:each="reading,readingState : ${readingList}">
+                            <blockquote th:text="${reading.title}" class="layui-elem-quote"></blockquote>
+                            <div  th:if="${reading.readingQuestionList!=null and reading.readingQuestionList.size()>0}" th:each="readingQuestion,readingQuestionState : ${reading.readingQuestionList}" class="test_content_nr">
+                                <ul>
+                                    <li th:id="|r_${readingQuestion.id}|">
+                                        <div class="test_content_nr_tt">
+                                            <i th:text="${readingQuestionState.count}"></i><span th:text="|(${readingQuestion.questionScore}分)|"></span><font th:text="${readingQuestion.questionTitle}"></font><b class="layui-icon">&#xe60a;</b>
+                                        </div>
+
+                                        <div class="test_content_nr_main">
+                                            <ul>
+
+                                                <li th:if="${readingQuestion.questionChoice1!=null}" class="option">
+                                                    <label><input lay-ignore value="1" type="radio" class="radioOrCheck" th:name="|r_${readingQuestion.id}|"
+                                                    />
+                                                        A.
+                                                        <p th:text="${readingQuestion.questionChoice1}" class="ue" style="display: inline;"></p>
+                                                    </label>
+                                                </li>
+                                                <li th:if="${readingQuestion.questionChoice2!=null}" class="option">
+                                                    <label><input lay-ignore value="2" type="radio" class="radioOrCheck" th:name="|r_${readingQuestion.id}|"
+                                                    />
+                                                        B.
+                                                        <p th:text="${readingQuestion.questionChoice2}" class="ue" style="display: inline;"></p>
+                                                    </label>
+                                                </li>
+                                                <li th:if="${readingQuestion.questionChoice3!=null}" class="option">
+                                                    <label><input lay-ignore value="3" type="radio" class="radioOrCheck" th:name="|r_${readingQuestion.id}|"
+                                                    />
+                                                        C.
+                                                        <p th:text="${readingQuestion.questionChoice3}" class="ue" style="display: inline;"></p>
+                                                    </label>
+                                                </li>
+                                                <li th:if="${readingQuestion.questionChoice4!=null}" class="option">
+                                                    <label><input lay-ignore value="4" type="radio" class="radioOrCheck" th:name="|r_${readingQuestion.id}|"
+                                                    />
+                                                        D.
+                                                        <p th:text="${readingQuestion.questionChoice4}" class="ue" style="display: inline;"></p>
+                                                    </label>
+                                                </li>
+                                                <li th:if="${readingQuestion.questionChoice5!=null and readingQuestion.questionChoice5!=''}" class="option">
+                                                    <label><input lay-ignore value="5" type="radio" class="radioOrCheck" th:name="|r_${readingQuestion.id}|"
+                                                    />
+                                                        E.
+                                                        <p th:text="${readingQuestion.questionChoice5}" class="ue" style="display: inline;"></p>
+                                                    </label>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+
+                        <div th:if="${essayQuestionList!=null and essayQuestionList.size()>0}" class="test_content">
+                            <div class="test_content_title">
+                                <h2>主观题</h2>
+                                <p>
+                                    <span>共</span><i th:text="${essayCount}" class="content_lit"></i><span>题，</span><span>合计</span><i th:text="${essayScore}" class="content_fs"></i><span>分</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div th:if="${essayQuestionList!=null and essayQuestionList.size()>0}" th:each="essayQuestion,essayQuestionState : ${essayQuestionList}" class="test_content_nr">
+                            <ul>
+                                <li th:id="|essayQuestion_${essayQuestion.id}|">
+                                    <div class="test_content_nr_tt">
+                                        <i th:text="${essayQuestionState.count}"></i><span th:text="|(${essayQuestion.score}分)|"></span><font th:text="${essayQuestion.title}"></font><b class="layui-icon">&#xe62a;</b>
+                                    </div>
+
+                                    <div class="test_content_nr_main">
+                                        <label class="layui-form-label">答案框：</label>
+                                        <div class="layui-input-block">
+                                            <textarea th:id="|e_${essayQuestion.id}|" placeholder="请输入答案" class="layui-textarea" th:name="|e_${essayQuestion.id}|"></textarea>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+
+            <div class="nr_right">
+                <div class="nr_rt_main">
+                    <div class="rt_nr1">
+                        <div class="rt_nr1_title">
+                            <h1>
+                                <i class="layui-icon">&#xe62a;</i>答题卡
+                            </h1>
+                            <p class="test_time">
+                                <i class="layui-icon">&#xe68d;</i> <b th:text="${examTime}" class="alt-1"></b>
+                            </p>
+                        </div>
+
+                        <div th:if="${singel!=null and singel.size()>0}" class="rt_content">
+                            <div class="rt_content_tt">
+                                <h2>单选题</h2>
+                                <p>
+                                    <span>共</span><i th:text="${singelCount}" class="content_lit"></i><span>题</span>
+                                </p>
+                            </div>
+                            <div class="rt_content_nr answerSheet">
+                                <ul>
+                                    <li th:each="question,questionState : ${singel}">
+                                        <a th:href="@{|#qu_${question.id}|}" th:text="${questionState.count}"></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div th:if="${muilty!=null and muilty.size()>0}" class="rt_content">
+                            <div class="rt_content_tt">
+                                <h2>多选题</h2>
+                                <p>
+                                    <span>共</span><i th:text="${muiltyCount}" class="content_lit"></i><span>题</span>
+                                </p>
+                            </div>
+                            <div class="rt_content_nr answerSheet">
+                                <ul>
+                                    <li th:each="question,questionState : ${muilty}">
+                                        <a th:href="@{|#qu_${question.id}|}" th:text="${questionState.count}"></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div th:if="${readingList!=null and readingList.size()>0}" class="rt_content">
+                            <div class="rt_content_tt">
+                                <h2>阅读理解</h2>
+                                <p>
+                                    <span>共</span><i th:text="${readingCount}" class="content_lit"></i><span>题</span>
+                                </p>
+                            </div>
+                            <div class="rt_content_nr answerSheet" th:each="reading,readingState : ${readingList}">
+                                <ul>
+                                    <li th:each="readingQuestion,readingQuestionState : ${reading.readingQuestionList}">
+                                        <a th:href="@{|#r_${readingQuestion.id}|}" th:text="${readingQuestionState.count}"></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div th:if="${essayQuestionList!=null and essayQuestionList.size()>0}" class="rt_content">
+                            <div class="rt_content_tt">
+                                <h2>主观题</h2>
+                                <p>
+                                    <span>共</span><i th:text="${essayCount}" class="content_lit"></i><span>题</span>
+                                </p>
+                            </div>
+                            <div class="rt_content_nr answerSheet">
+                                <ul>
+                                    <li th:each="essayQuestion,essayQuestionState : ${essayQuestionList}">
+                                        <a th:href="@{|#e_${essayQuestion.id}|}" th:text="${essayQuestionState.count}"></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!--nr end-->
+        <div class="foot"></div>
+    </div>
+    <script src="../../static/js/jquery-1.11.3.min.js"></script>
+    <script src="../../static/js/exam/jquery.easy-pie-chart.js"></script>
+    <!--时间js-->
+    <script src="../../static/js/exam/jquery.countdown.js"></script>
+    <script src="../../lib/layui/layui.js" type="text/javascript"></script>
+    <script src="../../static/js/exam/examingPage.js" type="text/javascript"></script>
+
+
+    <script th:inline="javascript">
+        var examToken = [[${examToken}]];
+        var studentId = [[${studentId}]];
+        var pageId = [[${pageId}]];
+        var scId = [[${scId}]];
+        var duration = [[${duration}]];
+    </script>
+
+        <script>
+        window.jQuery(function ($) {
+            "use strict";
+            $('time').countDown({
+                with_separators: false
+            });
+            $('.alt-1').countDown({
+                css_class: 'countdown-alt-1'
+            });
+            $('.alt-2').countDown({
+                css_class: 'countdown-alt-2'
+            });
+
+        });
+
+
+        $(function () {
+            $('li.option label').click(function () {
+                var examId = $(this).closest('.test_content_nr_main').closest('li').attr('id'); /*得到题目ID*/
+                var cardLi = $('a[href=#' + examId + ']'); /*根据题目ID找到对应答题卡*/
+                /*设置已答题*/
+                if (!cardLi.hasClass('hasBeenAnswer')) {
+                    cardLi.addClass('hasBeenAnswer');
+                }
+            });
+        });
+
+        $(".layui-textarea").bind("input propertychange",function () {
+            var examId = $(this).attr('id'); /*得到题目ID*/
+            var cardLi = $('a[href=#' + examId + ']'); /*根据题目ID找到对应答题卡*/
+            /*设置已答题*/
+            if (!cardLi.hasClass('hasBeenAnswer')) {
+                cardLi.addClass('hasBeenAnswer');
+            }
+        });
+
+    </script>
+</body>
+</html>
+
+

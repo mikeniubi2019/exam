@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xueyi.exam.mapper.CourseMapper">
+
+    <!-- 通用查询映射结果 -->
+
+    <resultMap id="BaseResultMap" type="com.xueyi.exam.beans.Course">
+        <id column="id" property="id" />
+        <result column="course_name" property="courseName" />
+        <result column="course_teacher" property="courseTeacher" />
+        <result column="course_description" property="courseDescription" />
+        <result column="course_xue_nian" property="courseXueNian" />
+        <result column="course_xue_qi" property="courseXueQi" />
+    </resultMap>
+
+    <resultMap id="BaseResultMap2" type="com.xueyi.exam.beans.CourseVo">
+        <id column="id" property="id" />
+        <result column="course_name" property="courseName" />
+        <result column="course_teacher" property="courseTeacher" />
+        <result column="course_description" property="courseDescription" />
+        <result column="course_xue_nian" property="courseXueNian" />
+        <result column="course_xue_qi" property="courseXueQi" />
+        <association property="studentCourse">
+                <id column="sid" property="id" />
+                <result column="student_id" property="studentId" />
+                <result column="course_id" property="courseId" />
+                <result column="score" property="score" />
+                <result column="count" property="count"/>
+                <result column="exam_time" property="examTime" />
+                <result column="exam_id" property="examId" />
+                <result column="page_id" property="pageId" />
+        </association>
+        <association property="exam">
+                <id column="eid" property="id"></id>
+                <result column="exam_name" property="examName"></result>
+                <result column="start_time" property="startTime"></result>
+                <result column="student_count" property="studentCount"></result>
+                <result column="end_time" property="endTime"></result>
+        </association>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, course_name, course_teacher, course_description
+    </sql>
+
+    <select id="getCoursesByProfessionId" parameterType="int" resultMap="BaseResultMap">
+        select course.* from course left join profession_course pc on course.id=pc.course_id where pc.profession_id = #{professionId}
+    </select>
+
+    <select id="getOneStudentCoursesVoByCondition" resultMap="BaseResultMap2">
+        select course.id ,course.course_name ,course.course_teacher  ,course.course_description  ,course.course_xue_nian ,course.course_xue_qi
+        ,sc.score
+        ,sc.exam_time
+        ,sc.exam_id
+        ,sc.id sid
+        ,sc.count
+        ,exam.id eid
+        ,exam.exam_name
+        ,exam.start_time
+        ,exam.student_count
+        ,exam.end_time
+        ,exam.page_id
+        from
+        course
+        join
+        student_course sc
+        on
+        course.id = sc.course_id
+        join
+        exam
+        on
+        exam.id = sc.exam_id
+        where
+        sc.student_id = #{studentId}
+        and
+        course.course_xue_nian = #{xueNian}
+        and
+        course.course_xue_qi = #{xueQi}
+        order by sc.score desc
+    </select>
+
+    <select id="getBaseExamCoursesVoByCondition" resultMap="BaseResultMap2">
+        select course.id ,course.course_name ,course.course_teacher  ,course.course_description  ,course.course_xue_nian ,course.course_xue_qi
+        ,sc.score
+        ,sc.exam_time
+        ,sc.exam_id
+        ,sc.id sid
+        ,sc.count
+        ,exam.id eid
+        ,exam.exam_name
+        ,exam.start_time
+        ,exam.student_count
+        ,exam.end_time
+        ,exam.page_id
+        from
+        course
+        join
+        student_course sc
+        on
+        course.id = sc.course_id
+        join
+        exam
+        on
+        exam.id = sc.exam_id
+        where
+        sc.student_id = #{studentId}
+        and
+        exam.end_time &gt; #{nowTime}
+        order by sc.score asc
+    </select>
+</mapper>

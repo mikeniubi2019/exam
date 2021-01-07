@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xueyi.exam.mapper.QuestionRecordMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xueyi.exam.beans.QuestionRecord">
+        <id column="id" property="id" />
+        <result column="student_course_id" property="studentCourseId" />
+        <result column="student_id" property="studentId" />
+        <result column="question_id" property="questionId" />
+        <result column="anwser" property="anwser" />
+        <result column="is_corect" property="isCorect" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, student_course_id, student_id, question_id, anwser, is_corect
+    </sql>
+
+</mapper>

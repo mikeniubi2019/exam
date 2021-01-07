@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta charset="UTF-8">
+  <title>考试平台</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="../../static/css/font.css">
+  <link rel="stylesheet" href="../../static/css/weadmin.css">
+</head>
+
+<body>
+  <div class="weadmin-body">
+    <form class="layui-form">
+
+      <div class="layui-form-item">
+        <label for="professionName" class="layui-form-label">
+          <span class="we-red">*</span>专业名称
+        </label>
+        <div class="layui-input-inline">
+          <input type="text" id="professionName" name="professionName" required="" lay-verify="required" autocomplete="off"
+             th:value="${profession.professionName}" class="layui-input">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label for="professionImg" class="layui-form-label">
+          <span class="we-red">*</span>专业图片
+        </label>
+        <div class="layui-input-inline">
+          <input type="text" th:value="${profession.professionImg}" id="professionImg" name="professionImg" required=""
+            autocomplete="off" class="layui-input">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label for="professionDescription" class="layui-form-label">
+          <span class="we-red">*</span>专业简介
+        </label>
+        <div class="layui-input-inline">
+          <input type="text" th:value="${profession.professionDescription}" id="professionDescription" name="professionDescription" required=""
+                 autocomplete="off" class="layui-input">
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <label for="professionDescription" class="layui-form-label">
+          <span class="we-red">*</span>专业课程
+        </label>
+        <table id="professionCourseList" lay-filter="professionCourseListFilter"></table>
+      </div>
+
+      <script type="text/html" id="professionCourseListBar">
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+      </script>
+
+    </form>
+  </div>
+  <script src="../../lib/layui/layui.js" type="text/javascript"></script>
+
+  <script src="../../static/js/profession/edit.js" type="text/javascript"></script>
+  <script th:inline="javascript">
+    var professionId = [[${profession.id}]];
+  </script>
+  <script src="../../static/js/profession/professionCourseList.js" type="text/javascript"></script>
+</body>
+
+</html>

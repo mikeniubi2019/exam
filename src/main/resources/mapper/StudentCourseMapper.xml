@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xueyi.exam.mapper.StudentCourseMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xueyi.exam.beans.StudentCourse">
+        <id column="id" property="id" />
+        <result column="student_id" property="studentId" />
+        <result column="course_id" property="courseId" />
+        <result column="score" property="score" />
+        <result column="count" property="count"></result>
+        <result column="exam_time" property="examTime" />
+        <result column="exam_id" property="examId" />
+        <result column="page_id" property="pageId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, student_id, course_id, score, exam_time, exam_id, page_id
+    </sql>
+
+    <select id="getStudentCoursesByCourseIdAndNianJi" resultMap="BaseResultMap">
+        select sc.* from student_course sc left join student on student.id = sc.student_id where student.nian_ji = #{nianJi} and sc.score &lt; 60 and sc.course_id = #{courseId}
+    </select>
+
+    <select id="getScoreByIdAndCount" resultType="int">
+        select sum(score) from (
+        (select er.get_score score from essay_record er where  er.student_course_id = #{studentCourseId} and er.count = #{count} and er.get_score is not null)
+        union all
+        (select rq.question_score score  from reading_question rq join reading_record rr on rr.question_id = rq.id where rr.student_course_id = #{studentCourseId} and rr.count = #{count} and rr.is_corect=1)
+        union all
+        (select q.question_score score from question q join question_record qr on qr.question_id = q.id where qr.student_course_id = #{studentCourseId} and qr.count = #{count} and qr.is_corect=1)
+        ) a
+    </select>
+</mapper>

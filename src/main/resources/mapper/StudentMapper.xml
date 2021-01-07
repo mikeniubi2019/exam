@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xueyi.exam.mapper.StudentMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xueyi.exam.beans.Student">
+        <id column="id" property="id" />
+        <result column="username" property="username" />
+        <result column="password" property="password" />
+        <result column="id_card" property="idCard" />
+        <result column="nian_ji" property="nianJi" />
+        <result column="name" property="name" />
+        <result column="profession_id" property="professionId" />
+    </resultMap>
+
+    <resultMap id="BaseResultMapVo" type="com.xueyi.exam.beans.StudentCourseVo">
+        <id column="id" property="id" />
+        <result column="student_id" property="studentId" />
+        <result column="course_id" property="courseId" />
+        <result column="score" property="score" />
+        <result column="count" property="count"/>
+        <result column="exam_time" property="examTime" />
+        <result column="exam_id" property="examId" />
+        <result column="page_id" property="pageId" />
+        <association property="student">
+            <id column="sid" property="id" />
+            <result column="username" property="username" />
+            <result column="password" property="password" />
+            <result column="id_card" property="idCard" />
+            <result column="nian_ji" property="nianJi" />
+            <result column="name" property="name" />
+            <result column="profession_id" property="professionId" />
+        </association>
+
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        username, password, id, id_card, nian_ji, name, profession_id
+    </sql>
+
+
+    <select id="findStudentExamByCondiction" resultMap="BaseResultMapVo">
+        select
+        sc.*,student.username,student.password,student.id_card,student.nian_ji,student.name,student.profession_id
+        from student_course sc
+        join student
+        on sc.student_id = student.id
+        <trim prefix="where" prefixOverrides="and ">
+            <if test="student!=null and student.name!=null and student.name!=''">
+                student.name = #{student.name}
+            </if>
+            <if test="student!=null and student.userName!=null and student.userName!=''">
+                and student.username = #{student.username}
+            </if>
+            <if test="student!=null and student.professionId!=null ">
+                and student.profession_id = #{student.professionId}
+            </if>
+            <if test="student!=null and student.nianJi!=null and student.nianJi!=''">
+                and student.nian_ji = #{student.nianJi}
+            </if>
+            <if test="courseId!=null">
+                and sc.course_id = #{courseId}
+            </if>
+        </trim>
+        order by student.username,sc.score desc
+        limit ${(laiuiPage.page-1)*laiuiPage.limit},#{laiuiPage.limit}
+    </select>
+</mapper>

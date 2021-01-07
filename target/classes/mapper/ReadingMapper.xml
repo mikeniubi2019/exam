@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xueyi.exam.mapper.ReadingMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xueyi.exam.beans.Reading">
+        <id column="id" property="id" />
+        <result column="title" property="title" />
+        <result column="score" property="score" />
+        <result column="page_id" property="pageId" />
+        <collection property="readingQuestionList" javaType="List" ofType="com.xueyi.exam.beans.ReadingQuestion">
+            <id column="rid" property="id" />
+            <result column="title_id" property="titleId" />
+            <result column="question_title" property="questionTitle" />
+            <result column="question_choice1" property="questionChoice1" />
+            <result column="question_choice2" property="questionChoice2" />
+            <result column="question_choice3" property="questionChoice3" />
+            <result column="question_choice4" property="questionChoice4" />
+            <result column="question_choice5" property="questionChoice5" />
+            <result column="question_choice6" property="questionChoice6" />
+            <result column="question_answer" property="questionAnswer" />
+            <result column="question_score" property="questionScore" />
+        </collection>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, title, score, page_id
+    </sql>
+    <sql id="Base_Column_List_Question">
+        q.id rid,  q.title_id,  q.question_title,  q.question_choice1,  q.question_choice2,  q.question_choice3,  q.question_choice4,  q.question_choice5,  q.question_choice6,  q.question_answer,  q.question_score
+    </sql>
+
+    <select id="getReadingsByPageId" resultMap="BaseResultMap">
+        select reading.*,<include refid="Base_Column_List_Question"></include>
+        from reading
+        join reading_question q
+        on reading.id = q.title_id
+        where reading.page_id = #{pageId}
+    </select>
+</mapper>
