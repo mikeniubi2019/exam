@@ -314,7 +314,7 @@ public class ExamController {
             model.addAttribute("essayScore",null);
         }
 
-        redisUtils.set(QuestionController.TOKEN+userName+student.getId(),userName,exam.getExamDuration()*60);
+        redisUtils.set(QuestionController.TOKEN+userName+student.getId(),userName,exam.getExamDuration()*60+120);
 
         model.addAttribute("examToken",userName+student.getId());
         model.addAttribute("studentId",student.getId());

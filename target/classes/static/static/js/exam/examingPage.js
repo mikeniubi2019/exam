@@ -50,11 +50,11 @@ layui.use(['jquery','form', 'layer', 'admin'], function () {
                     }
                   }
                 });
-              },1000*3);
+              },1000*2);
             });
           }
           else {
-            layer.msg(data.m);
+            layer.alert(data.m);
           }
         },
         error:function () {

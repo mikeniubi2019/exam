@@ -61,24 +61,24 @@ public class LoginController {
                      model.addAttribute("name",schoolUtils.getCurrentStudent().getName());
                  }
             }catch (Exception e){
-                e.printStackTrace();
-                model.addAttribute("name","");
+                 System.out.println(student+"错误");
+                 return "loginError";
             }
-            System.out.println(System.currentTimeMillis()-start);
+
             try {
                 model.addAttribute("currentXueqi",schoolUtils.getCurrentXuenqi());
             }catch (Exception e){
                 e.printStackTrace();
                 model.addAttribute("currentXueqi","");
             }
-            System.out.println(System.currentTimeMillis()-start);
+
             try {
                 model.addAttribute("currentXuenian",schoolUtils.getCurrentXuenian());
             }catch (Exception e){
                 e.printStackTrace();
                 model.addAttribute("currentXueqi","");
             }
-            System.out.println(System.currentTimeMillis()-start);
+            System.out.println(subject.getPrincipal().toString()+"登录用时："+(System.currentTimeMillis()-start));
             return "index";
         }catch (Exception e){
             return "loginError";
@@ -107,22 +107,23 @@ public class LoginController {
             e.printStackTrace();
             model.addAttribute("name","");
         }
-        System.out.println(System.currentTimeMillis()-start);
+
         try {
             model.addAttribute("currentXueqi",schoolUtils.getCurrentXuenqi());
         }catch (Exception e){
             e.printStackTrace();
             model.addAttribute("currentXueqi","");
         }
-        System.out.println(System.currentTimeMillis()-start);
+
         try {
             model.addAttribute("currentXuenian",schoolUtils.getCurrentXuenian());
         }catch (Exception e){
             e.printStackTrace();
             model.addAttribute("currentXueqi","");
         }
-        System.out.println(System.currentTimeMillis()-start);
+        System.out.println(subject.getPrincipal().toString()+"登录用时："+(System.currentTimeMillis()-start));
         return "index";
+
     }
 
     @RequestMapping("/")

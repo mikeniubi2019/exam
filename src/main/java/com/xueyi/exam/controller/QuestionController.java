@@ -187,7 +187,11 @@ public class QuestionController {
     public R receiveExamResult(@RequestParam Map<String,String> map){
         String examToken = map.get("examToken");
         if (redisUtils.get(TOKEN+examToken)==null){
-            return R.fail;
+            R r = new R();
+            r.setCode(500);
+            r.setM("考试超时或者重复提交！提交失败");
+            System.out.println("examToken 未找到");
+            return  r;
         }
         redisUtils.del(TOKEN+examToken);
 
@@ -210,7 +214,11 @@ public class QuestionController {
         }
 
         if (exam.getStudentCount()<examCount){
-            return R.fail;
+            R r = new R();
+            r.setCode(500);
+            r.setM("考试超过限制次数！提交失败");
+            System.out.println("超过考试次数限制");
+            return  r;
         }
 
         studentCourse.setCount(examCount);
@@ -225,51 +233,53 @@ public class QuestionController {
             List<EssayRecord> essayQuestionList = new ArrayList<>(20);
             map.entrySet().stream().forEach(entry->{
                 String[] key = entry.getKey().split("_");
-                if (key.length<2){
-                    Integer qId = Integer.parseInt(entry.getKey());
-                    Question question = questionService.getById(qId);
-                    QuestionRecord questionRecord = new QuestionRecord();
-                    questionRecord.setAnwser(entry.getValue());
-                    questionRecord.setQuestionId(qId);
-                    questionRecord.setStudentId(studentId);
-                    questionRecord.setStudentCourseId(scId);
-                    questionRecord.setCount(finalExamCount);
-                    if (question.getQuestionAnswer().equals(entry.getValue())){
-                        score.addAndGet(question.getQuestionScore());
-                        questionRecord.setIsCorect(1);
+                if (!StringUtils.isEmpty(entry.getValue())){
+                    if (key.length<2){
+                        Integer qId = Integer.parseInt(entry.getKey());
+                        Question question = questionService.getById(qId);
+                        QuestionRecord questionRecord = new QuestionRecord();
+                        questionRecord.setAnwser(entry.getValue());
+                        questionRecord.setQuestionId(qId);
+                        questionRecord.setStudentId(studentId);
+                        questionRecord.setStudentCourseId(scId);
+                        questionRecord.setCount(finalExamCount);
+                        if (question.getQuestionAnswer().equals(entry.getValue())){
+                            score.addAndGet(question.getQuestionScore());
+                            questionRecord.setIsCorect(1);
+                        }else {
+                            questionRecord.setIsCorect(0);
+                        }
+
+                        questionList.add(questionRecord);
+                    }else if (key[0].equals("r")){
+                        Integer rid = Integer.parseInt(key[1]);
+                        ReadingQuestion readingQuestion = readingQuestionService.getById(rid);
+                        ReadingRecord readingRecord = new ReadingRecord();
+                        readingRecord.setAnwser(entry.getValue());
+                        readingRecord.setQuestionId(rid);
+                        readingRecord.setStudentId(studentId);
+                        readingRecord.setStudentCourseId(scId);
+                        readingRecord.setCount(finalExamCount);
+                        if (readingQuestion.getQuestionAnswer().equals(entry.getValue())){
+                            score.addAndGet(readingQuestion.getQuestionScore());
+                            readingRecord.setIsCorect(1);
+                        }else {
+                            readingRecord.setIsCorect(0);
+                        }
+
+                        readingQuestionList.add(readingRecord);
+                    }else if (key[0].equals("e")){
+                        EssayRecord essayRecord = new EssayRecord();
+                        essayRecord.setAnswer(entry.getValue());
+                        essayRecord.setQuestionId(Integer.parseInt(key[1]));
+                        essayRecord.setStudentCourseId(scId);
+                        essayRecord.setStudentId(studentId);
+                        essayRecord.setCount(finalExamCount);
+
+                        essayQuestionList.add(essayRecord);
                     }else {
-                        questionRecord.setIsCorect(0);
+                        System.out.println(studentId+":未知交卷数据:"+entry.getKey()+entry.getValue());
                     }
-
-                    questionList.add(questionRecord);
-                }else if (key[0].equals("r")){
-                    Integer rid = Integer.parseInt(key[1]);
-                    ReadingQuestion readingQuestion = readingQuestionService.getById(rid);
-                    ReadingRecord readingRecord = new ReadingRecord();
-                    readingRecord.setAnwser(entry.getValue());
-                    readingRecord.setQuestionId(rid);
-                    readingRecord.setStudentId(studentId);
-                    readingRecord.setStudentCourseId(scId);
-                    readingRecord.setCount(finalExamCount);
-                    if (readingQuestion.getQuestionAnswer().equals(entry.getValue())){
-                        score.addAndGet(readingQuestion.getQuestionScore());
-                        readingRecord.setIsCorect(1);
-                    }else {
-                        readingRecord.setIsCorect(0);
-                    }
-
-                    readingQuestionList.add(readingRecord);
-                }else if (key[0].equals("e")){
-                    EssayRecord essayRecord = new EssayRecord();
-                    essayRecord.setAnswer(entry.getValue());
-                    essayRecord.setQuestionId(Integer.parseInt(key[1]));
-                    essayRecord.setStudentCourseId(scId);
-                    essayRecord.setStudentId(studentId);
-                    essayRecord.setCount(finalExamCount);
-
-                    essayQuestionList.add(essayRecord);
-                }else {
-                    System.out.println(studentId+":未知交卷数据:"+entry.getKey()+entry.getValue());
                 }
             });
             questionRecordService.saveBatch(questionList);
@@ -288,7 +298,7 @@ public class QuestionController {
         R r = new R();
         r.setData(mark);
         r.setCode(100);
-        return  r;
+        return r;
     }
 
     @RequestMapping("/upload")
